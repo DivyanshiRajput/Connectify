@@ -20,3 +20,6 @@
 npm-debug.log*
 
 .vscode
+
+/data
+/logs
