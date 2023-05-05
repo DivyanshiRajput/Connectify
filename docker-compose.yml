@@ -1,0 +1,71 @@
+version: "3.8"
+
+services:
+  frontend:
+    build: ./client
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  backend:
+    build: ./server
+    ports:
+      - "3001:3001"
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/myapp
+      - PORT=3001
+      - JWT_SECRET='socialMediaIsReallyCool'
+    depends_on:
+      - mongo
+    # logging:
+    #   driver: gelf
+    #   options:
+    #     gelf-address: "udp://localhost:12201" # Logstash UDP input port
+    #     tag: "backend"
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data/db:/data/db:rw
+      - ./data/configdb:/data/configdb:rw
+
+  # elasticsearch:
+  #   image: elasticsearch:7.11.1
+  #   environment:
+  #     - discovery.type=single-node
+  #   volumes:
+  #     - ./elasticsearch_data/:/usr/share/elasticsearch/data
+  #   mem_limit: "1g"
+
+  # redis-cache:
+  #   image: redis:6.2
+
+  # logstash-agent:
+  #   image: logstash:7.11.1
+  #   volumes:
+  #     - ./logstash-agent:/etc/logstash
+  #   command: logstash -f /etc/logstash/logstash.conf
+  #   depends_on:
+  #     - elasticsearch
+  #   ports:
+  #     - 12201:12201/udp
+
+  # logstash-central:
+  #   image: logstash:7.11.1
+  #   volumes:
+  #     - ./logstash-central:/etc/logstash
+  #   command: logstash -f /etc/logstash/logstash.conf
+  #   depends_on:
+  #     - elasticsearch
+
+  # kibana:
+  #   image: kibana:7.11.1
+  #   ports:
+  #     - 5601:5601
+  #   environment:
+  #     - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+  #   depends_on:
+  #     - elasticsearch

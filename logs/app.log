@@ -1,0 +1,7 @@
+{"level":"info","message":"User n@gmail.com created a post.","timestamp":"2023-05-03 15:12:47"}
+{"level":"info","message":"User a@gmail.com registered.","timestamp":"2023-05-03 15:14:44"}
+{"level":"info","message":"User a@gmail.com logged in.","timestamp":"2023-05-03 15:14:51"}
+{"level":"info","message":"User 64522d0cfa0ea65672c9547a liked post 645222e1043259da83dff530.","timestamp":"2023-05-03 15:15:08"}
+{"level":"info","message":"User a@gmail.com unliked post 645222e1043259da83dff530.","timestamp":"2023-05-03 15:15:45"}
+{"level":"info","message":"User a@gmail.com added n@gmail.com as a friend.","timestamp":"2023-05-03 15:15:56"}
+{"level":"info","message":"User a@gmail.com removed n@gmail.com as a friend.","timestamp":"2023-05-03 15:16:12"}
