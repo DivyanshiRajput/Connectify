@@ -13,8 +13,8 @@ pipeline{
 		stage('build') {
 			steps {
                 checkout scm
-				sh 'cd server && npm install'
-                sh 'cd client && npm install'
+				sh 'cd server && npm -f install'
+                sh 'cd client && npm -f install'
                 sh 'cd client && npm run build'
 			}
 		}
@@ -22,7 +22,7 @@ pipeline{
         stage('Test') {
             steps {
                 // Start the MongoDB database container using Docker Compose
-                sh 'docker-compose up -d mongodb'
+                sh 'docker-compose up -d mongo'
 
                 // Run the server and client tests
                 // sh 'cd server && npm test'
@@ -36,7 +36,8 @@ pipeline{
         stage('Build and Push Docker Image - frontend') {
             steps {
                 script{
-                    dockerImage = docker.build(frontend + ":latest")
+                    def dockerfileDir = "./client"
+                    dockerImage = docker.build(frontend + ":latest", "--file ${dockerfileDir}/Dockerfile ${dockerfileDir}")
                     docker.withRegistry('', registryCredential) {
                         dockerImage.push()
                     }
@@ -47,7 +48,8 @@ pipeline{
         stage('Build and Push Docker Image - backend') {
             steps {
                 script{
-                    dockerImage = docker.build(backend + ":latest")
+                    def dockerfileDir = "./server"
+                    dockerImage = docker.build(backend + ":latest", "--file ${dockerfileDir}/Dockerfile ${dockerfileDir}")
                     docker.withRegistry('', registryCredential) {
                         dockerImage.push()
                     }
