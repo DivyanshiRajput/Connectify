@@ -30,7 +30,7 @@ app.use(morgan("common"));
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
-app.use("/assets", express.static(path.join(__dirname, "public/assets")));
+app.use("/api/assets", express.static(path.join(__dirname, "public/assets")));
 
 /* FILE STORAGE */
 const storage = multer.diskStorage({
@@ -44,24 +44,33 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 /* ROUTES WITH FILES */
-app.post("/auth/register", upload.single("picture"), register);
-app.post("/posts", verifyToken, upload.single("picture"), createPost);
+app.post("/api/auth/register", upload.single("picture"), register);
+app.post("/api/posts", verifyToken, upload.single("picture"), createPost);
 
 /* ROUTES */
-app.use("/auth", authRoutes);
-app.use("/users", userRoutes);
-app.use("/posts", postRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/posts", postRoutes);
+
+app.get('/api/hello', (req, res) => {
+  res.status(200).send('Hello, world!');
+});
 
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 6001;
+
+console.log(`mongodb://${process.env.MONGO_URL}:27017/social`)
+console.log("PORT", PORT)
+
+app.listen(PORT, () => console.log(`Server Port: ${PORT}`));
+
 mongoose
-  .connect(process.env.MONGO_URL, {
+  .connect(`mongodb://${process.env.MONGO_URL}:27017/social`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(() => {
-    app.listen(PORT, () => console.log(`Server Port: ${PORT}`));
-
+    console.log("MongoDB Connected ################", `mongodb://${process.env.MONGO_URL}:27017/social`);
     /* ADD DATA ONE TIME */
     // User.insertMany(users);
     // Post.insertMany(posts);
