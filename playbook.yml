@@ -1,0 +1,71 @@
+- name: pull updated image
+  hosts: all
+  pre_tasks:
+    - name: Check Minikube's status.
+      command: minikube status
+      register: minikube_status
+      changed_when: false
+      ignore_errors: true
+    - name: Start Minikube if it's not running.
+      command: minikube start --vm-driver=docker --cpus 4 --memory 9152
+      when: "not minikube_status.stdout or 'Running' not in minikube_status.stdout"
+    - name: "Install kubernetes python package"
+      pip:
+        name: kubernetes
+        state: present
+  tasks:
+    - name: Delete any existing mongo deployment
+      kubernetes.core.k8s:
+        src: ./k8/mongo-app.yaml
+        state: absent
+        namespace: default
+    - name: Create a deployment for mongo
+      kubernetes.core.k8s:
+        src: ./k8/mongo-app.yaml
+        state: present
+        apply: true
+        namespace: default
+    - name: Delete any existing deployment of Backend Deployment
+      kubernetes.core.k8s:
+        src: ./k8/backend-app.yaml
+        state: absent
+        namespace: default
+    - name: Create a deployment for Blacklist Service
+      kubernetes.core.k8s:
+        src: ./k8/backend-app.yaml
+        state: present
+        apply: true
+        namespace: default
+    - name: Delete any existing deployment of Frontend Deployment
+      kubernetes.core.k8s:
+        src: ./k8/frontend-app.yaml
+        state: absent
+        namespace: default
+    - name: Create a deployment for Frontend Service
+      kubernetes.core.k8s:
+        src: ./k8/frontend-app.yaml
+        state: present
+        apply: true
+        namespace: default
+    - name: Delete any existing deployment of Filebeat
+      kubernetes.core.k8s:
+        src: ./k8/file-beat-config.yaml
+        state: absent
+        namespace: default
+    - name: Create a deployment for Filebeat
+      kubernetes.core.k8s:
+        src: ./k8/file-beat-config.yaml
+        state: present
+        apply: true
+        namespace: default
+    - name: Delete any existing deployment of Logstash
+      kubernetes.core.k8s:
+        src: ./k8/logstash.yaml
+        state: absent
+        namespace: default
+    - name: Create a deployment for Logstash
+      kubernetes.core.k8s:
+        src: ./k8/logstash.yaml
+        state: present
+        apply: true
+        namespace: default

@@ -27,8 +27,21 @@ spec:
           value: socialMediaIsReallyCool
         - name: PORT
           value: '3001'
-
-
+        - name: ELASTIC_USERNAME
+          value: elastic
+        - name: ELASTIC_PASSWORD
+          value: gA7Zr9ZNHazQ3uFrJeLBXxtD
+        - name: ELASTIC_CLOUD_ID
+          value: 4c9b00c9b6bb4f859d07abe312d0d965:dXMtY2VudHJhbDEuZ2NwLmNsb3VkLmVzLmlvOjQ0MyRmNWU1M2I4MTNlZjU0OGY5YmNhZTk5OTA5M2QzNmQ3ZSRmMWY4M2Q2YzE0ZDI0YjU0YTI4MzAyYmY0MDdhNmU2Ng==
+        volumeMounts:
+              - name: varlog
+                mountPath: /var/log
+      volumes:
+        - name: varlog
+          hostPath:
+            path: /var/log
+# gmqaoxtlwxptddzwnr@tpwlb.com
+# Nikhil@8758
 
 ---
 apiVersion: v1
