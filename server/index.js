@@ -17,13 +17,17 @@ import { verifyToken } from "./middleware/auth.js";
 import User from "./models/User.js";
 import Post from "./models/Post.js";
 import { users, posts } from "./data/index.js";
+// import elasticClient from "./elastic-client.js";
 
 /* CONFIGURATIONS */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config();
 const app = express();
-app.use(express.json());
+
+// app.use(express.json());
+app.use(bodyParser.json())
+
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("common"));
@@ -52,8 +56,24 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
 
-app.get('/api/hello', (req, res) => {
+const sample = {
+  title: 'Hello World!',
+  author: 'John Doe',
+  content: 'This is my first post!',
+}
+
+app.get('/api/hello', async (req, res) => {
+  // const result = await elasticClient.index({
+  //   index: "sample",
+  //   document: sample,
+  //   // timestamp: Date.now(),
+  //   // log: "info",
+  // });
+
+  // console.log(result);
+
   res.status(200).send('Hello, world!');
+  
 });
 
 /* MONGOOSE SETUP */

@@ -2,6 +2,8 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import logger from "../logger.js";
+// import elasticClient from "../elastic-client.js";
+
 
 /* REGISTER USER */
 export const register = async (req, res) => {
@@ -33,10 +35,25 @@ export const register = async (req, res) => {
       impressions: Math.floor(Math.random() * 10000),
     });
     const savedUser = await newUser.save();
-    var message = `User ${savedUser.email} registered.`;
+    var message = `User ${savedUser.email}: registered.`;
     logger.info(message);
 
+    // const result = await elasticClient.index({
+    //   index: "users",
+    //   document: {
+    //     userId: savedUser._id,
+    //     firstName: savedUser.firstName,
+    //     lastName: savedUser.lastName,
+    //     location: savedUser.location,
+    //     occupation: savedUser.occupation,
+    //     viewedProfile: savedUser.viewedProfile,
+    //     impressions: savedUser.impressions,
+    //   },
+    // });
+
+    // console.log(result)
     res.status(201).json(savedUser);
+    
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -53,7 +70,7 @@ export const login = async (req, res) => {
     if (!isMatch) return res.status(400).json({ msg: "Invalid credentials. " });
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-    var message = `User ${user.email} logged in.`
+    var message = `User ${user.email}: logged in.`
     logger.info(message);
 
     delete user.password;
@@ -62,3 +79,4 @@ export const login = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+

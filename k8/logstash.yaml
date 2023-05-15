@@ -1,0 +1,102 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: logstash-pod
+  labels:
+    app: logstash-pod
+spec:
+  containers:
+    - image: logstash:8.7.1
+      name: logstash-pod
+      imagePullPolicy: IfNotPresent
+      env:
+        - name: ELASTICSEARCH_HOSTS
+          value: https://f5e53b813ef548f9bcae999093d36d7e.us-central1.gcp.cloud.es.io:443
+      ports:
+        - containerPort: 5044
+      volumeMounts:
+        - name: config-volume
+          mountPath: /usr/share/logstash/config
+        - name: logstash-pipeline
+          mountPath: /usr/share/logstash/pipeline
+      command:
+        - logstash
+  volumes:
+    - name: config-volume
+      configMap:
+        name: logstash-configmap
+        items:
+          - key: logstash.yml
+            path: logstash.yml
+    - name: logstash-pipeline
+      configMap:
+        name: logstash-configmap
+        items:
+          - key: logstash.conf
+            path: logstash.conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: logstash
+spec:
+  ports:
+    - name: 5044-5044
+      port: 5044
+      protocol: TCP
+      targetPort: 5044
+  type: ClusterIP
+  selector:
+    app: logstash-pod
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash-configmap
+data:
+  logstash.yml: |
+    xpack.monitoring.enabled: false
+    xpack.monitoring.elasticsearch.hosts: ["https://f5e53b813ef548f9bcae999093d36d7e.us-central1.gcp.cloud.es.io:443"]
+    xpack.monitoring.elasticsearch.username: "elastic"
+    xpack.monitoring.elasticsearch.password: "gA7Zr9ZNHazQ3uFrJeLBXxtD"
+    path.config: /usr/share/logstash/pipeline
+
+  logstash.conf: |
+    input {
+      beats {
+        port => 5044
+      }
+    }
+    filter {
+      if [fields][log-source] == "logfile" {
+        grok {
+            match => { "message" => "\{%{QUOTEDSTRING:level_label}:%{QUOTEDSTRING:loglevel},\"message\":\"User %{GREEDYDATA:user_email}: %{GREEDYDATA:action}\.\",%{QUOTEDSTRING:timestamp_label}:%{QUOTEDSTRING:timestamp}\}"}
+        }
+
+        mutate {
+          add_field => { "tmp_path" => "%{[log][file][path]}" }
+        }
+
+        mutate {
+          split => ["tmp_path", "#"]
+          add_field => { "kubernetes.node.pod.name" => "%{[tmp_path][1]}" }
+          add_field => { "kubernetes.node.name" => "%{[tmp_path][2]}" }
+          add_field => { "kubernetes.namespace" => "%{[tmp_path][3]}" }
+          add_field => { "tmp_podname" => "%{[tmp_path][4]}" }
+        }
+
+        mutate {
+          split => ["tmp_podname", "."]
+          add_field => { "kubernetes.pod.name" => "%{tmp_podname}" }
+        }
+      }
+    }
+
+    output {
+        elasticsearch {
+          hosts => ["https://f5e53b813ef548f9bcae999093d36d7e.us-central1.gcp.cloud.es.io:443"]
+          user => "elastic"
+          password => "gA7Zr9ZNHazQ3uFrJeLBXxtD"
+        }
+    }

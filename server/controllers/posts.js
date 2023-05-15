@@ -1,6 +1,7 @@
 import Post from "../models/Post.js";
 import User from "../models/User.js";
 import logger from "../logger.js";
+// import elasticClient from "../elastic-client.js";
 
 /* CREATE */
 export const createPost = async (req, res) => {
@@ -19,10 +20,24 @@ export const createPost = async (req, res) => {
       comments: [],
     });
     await newPost.save();
-    logger.info(`User ${user.email} created a post.`);
+    logger.info(`User ${user.email}: created a post.`);
 
     const post = await Post.find();
+
+    // const result = await elasticClient.index({
+    //   index: "posts",
+    //   document: {
+    //     userId: userId,
+    //     firstName: user.firstName,
+    //     lastName: user.lastName,
+    //     location: user.location,
+    //     description: description,
+    //   },
+    // });
+
+    // console.log(result)
     res.status(201).json(post);
+
   } catch (err) {
     res.status(409).json({ message: err.message });
   }
@@ -59,10 +74,10 @@ export const likePost = async (req, res) => {
 
     if (isLiked) {
       post.likes.delete(userId);
-      logger.info(`User ${user.email} unliked post ${post.id}.`);
+      logger.info(`User ${user.email}: unliked post ${post.id}.`);
     } else {
       post.likes.set(userId, true);
-      logger.info(`User ${user.email} liked post ${post.id}.`);
+      logger.info(`User ${user.email}: liked post ${post.id}.`);
     }
 
     const updatedPost = await Post.findByIdAndUpdate(

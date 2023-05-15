@@ -4,7 +4,7 @@ const { combine, timestamp, json } = format;
 const logger = createLogger({
   transports: [
     new transports.Console(),
-    new transports.File({ filename: "../logs/app.log", timestamp: true }),
+    new transports.File({ filename: "../var/log/app.log", timestamp: true }),
   ],
   format: combine(
     timestamp({

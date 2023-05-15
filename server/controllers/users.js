@@ -41,11 +41,11 @@ export const addRemoveFriend = async (req, res) => {
     if (user.friends.includes(friendId)) {
       user.friends = user.friends.filter((id) => id !== friendId);
       friend.friends = friend.friends.filter((id) => id !== id);
-      logger.info(`User ${user.email} removed ${friend.email} as a friend.`);
+      logger.info(`User ${user.email}: removed ${friend.email} as a friend.`);
     } else {
       user.friends.push(friendId);
       friend.friends.push(id);
-      logger.info(`User ${user.email} added ${friend.email} as a friend.`);
+      logger.info(`User ${user.email}: added ${friend.email} as a friend.`);
     }
     await user.save();
     await friend.save();
