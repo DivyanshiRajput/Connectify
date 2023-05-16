@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: linkup-frontend
-        image: frontend:latest
+        image: divyanshi2241/frontend:latest
         imagePullPolicy: Never
         ports:
         - containerPort: 3000

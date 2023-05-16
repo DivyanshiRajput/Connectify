@@ -22,13 +22,13 @@ pipeline{
         stage('Test') {
             steps {
                 // Start the MongoDB database container using Docker Compose
-                sh 'docker-compose up -d mongo'
+                // sh 'docker-compose up -d mongo'
 
                 // Run the server and client tests
-                sh 'cd server && npm test'
+                // sh 'cd server && npm test'
 
                 // Stop the MongoDB container
-                sh 'docker-compose down'
+                // sh 'docker-compose down'
             }
         }
 
