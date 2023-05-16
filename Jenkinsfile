@@ -21,6 +21,7 @@ pipeline{
 
         stage('Test') {
             steps {
+                echo 'Testing..'
                 // Start the MongoDB database container using Docker Compose
                 // sh 'docker-compose up -d mongo'
 
@@ -29,6 +30,7 @@ pipeline{
 
                 // Stop the MongoDB container
                 // sh 'docker-compose down'
+                echo 'Done Testing'
             }
         }
 
