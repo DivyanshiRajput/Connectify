@@ -64,7 +64,7 @@ pipeline{
 
                 withPythonEnv('python3') {
                     sh 'pip3 install ansible'
-                    sh 'ansible-playbook playbook.yml'
+                    sh 'ansible-playbook playbook.yml -i inventory'
                 }
 
                 echo 'Done Deploying'
