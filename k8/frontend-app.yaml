@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: linkup-frontend
-        image: divyanshi2241/frontend:latest
+        image: divyanshi2241/linkup-frontend:latest
         ports:
         - containerPort: 3000
 
