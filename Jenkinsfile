@@ -23,13 +23,13 @@ pipeline{
             steps {
                 echo 'Testing..'
                 // Start the MongoDB database container using Docker Compose
-                // sh 'docker-compose up -d mongo'
+                sh 'docker-compose up -d mongo'
 
                 // Run the server and client tests
                 // sh 'cd server && npm test'
 
                 // Stop the MongoDB container
-                // sh 'docker-compose down'
+                sh 'docker-compose down'
                 echo 'Done Testing'
             }
         }
@@ -61,7 +61,12 @@ pipeline{
         stage('Deploy') {
             steps {
                 echo 'Deploying locally..'
-                sh 'ansible-playbook -i inventory playbook.yml'
+
+                withPythonEnv('python3') {
+                    sh 'pip3 install ansible'
+                    sh 'ansible-playbook -i inventory playbook.yml'
+                }
+
                 echo 'Done Deploying'
             }
         }
