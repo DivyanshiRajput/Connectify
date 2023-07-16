@@ -2,6 +2,8 @@
 ## LinkUp
 Team Details: Divyanshi Rajput and Nikhil Agarwal
 
+Project Document: [LinkUp Project Report](https://nikhil0360.notion.site/nikhil0360/CS-816-Software-Production-Engineering-427950162e58491d9c95a1656733a126)
+
 ### Project Details: 
 LinkUp is a social media application that provides a platform for users to create a profile, make posts, share images, like and comment on posts, make friends, and engage with their community. The platform is designed to be user-friendly, with a simple and intuitive interface that allows users to easily navigate and interact with the platform.
 
